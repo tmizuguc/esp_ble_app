@@ -16,6 +16,10 @@ bool oldDeviceConnected = false;
 #define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
 #define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
 
+#define MD1_IN1 32 //GPIO #32
+#define MD1_IN2 33 //GPIO #33
+#define MD2_IN1 25 //GPIO #25
+#define MD2_IN2 26 //GPIO #26
 
 class MyServerCallbacks: public BLEServerCallbacks {
     void onConnect(BLEServer* pServer) {
@@ -35,23 +39,59 @@ class MyCallbacks: public BLECharacteristicCallbacks {
     if(value.length() > 0){
 
       Serial.println("**********");
-      Serial.print("New value: ");
       
-      for(int i=0; i < value.length(); i++){
-        Serial.print(value[i]);
+      // GPIO 32,33
+      if (value == "buttonIndex1: 0") {
+        Serial.println("out1 = 0, out2 = 0;");
+        digitalWrite(MD1_IN1,LOW);
+        digitalWrite(MD1_IN2,LOW);
+      } else if (value == "buttonIndex1: 1") {
+        Serial.println("out1 = 1, out2 = 0;");
+        digitalWrite(MD1_IN1,HIGH);
+        digitalWrite(MD1_IN2,LOW);
+      } else if (value == "buttonIndex1: 2") {
+        Serial.println("out1 = 0, out2 = 1;");
+        digitalWrite(MD1_IN1,LOW);
+        digitalWrite(MD1_IN2,HIGH);
+      } else if (value == "buttonIndex1: 3"){
+        Serial.println("out1 = 1, out2 = 1;");
+        digitalWrite(MD1_IN1,HIGH);
+        digitalWrite(MD1_IN2,HIGH);
+      } else if (value == "buttonIndex2: 0"){
+        Serial.println("out1 = 0, out2 = 0;");
+        digitalWrite(MD2_IN1,LOW);
+        digitalWrite(MD2_IN2,LOW);
+      } else if (value == "buttonIndex2: 1"){
+        Serial.println("out1 = 1, out2 = 0;");
+        digitalWrite(MD2_IN1,HIGH);
+        digitalWrite(MD2_IN2,LOW);
+      } else if (value == "buttonIndex2: 2"){
+        Serial.println("out1 = 0, out2 = 1;");
+        digitalWrite(MD2_IN1,LOW);
+        digitalWrite(MD2_IN2,HIGH);
+      } else if (value == "buttonIndex2: 3"){
+        Serial.println("out1 = 1, out2 = 1;");
+        digitalWrite(MD2_IN1,HIGH);
+        digitalWrite(MD2_IN2,HIGH);
+      } else {
+        for(int i=0; i < value.length(); i++) {
+            Serial.print(value[i]);
+        }
       }
-
-      Serial.println();
-      Serial.println("**********");
-      
     }
   }
 };
 
 
 void setup() {
-  delay(10000);
+  delay(3000);
   Serial.begin(115200);
+
+  // Setup Pins
+  pinMode(MD1_IN1, OUTPUT);
+  pinMode(MD1_IN2, OUTPUT);
+  pinMode(MD2_IN1, OUTPUT);
+  pinMode(MD2_IN2, OUTPUT);
 
   // Create the BLE Device
   BLEDevice::init("ESP32 GET NOTI FROM DEVICE");
