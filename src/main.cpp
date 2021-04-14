@@ -29,8 +29,8 @@ int r_flexor_data[r_length] = {0};
 int ar_extensor_data[r_length] = {0};
 int ar_flexor_data[r_length] = {0};
 // 信号処理後の値
-int e_score = 0;
-int f_score = 0;
+float e_score = 0;
+float f_score = 0;
 
 // 初期化関数
 void InitData()
@@ -106,10 +106,10 @@ void TaskMaincode(void *pvParameters)
       continue;
     }
 
-    // 整列処理
     if (xSemaphoreTake(xMutex, (portTickType)100) == pdTRUE)
     {
       // Serial.println("taskMain start.");
+      // 整列処理
       ArrangeArray(
           r_extensor_data,
           r_flexor_data,
@@ -117,7 +117,6 @@ void TaskMaincode(void *pvParameters)
           ar_flexor_data,
           begin_index,
           r_length);
-
       xSemaphoreGive(xMutex);
     }
 
@@ -128,9 +127,14 @@ void TaskMaincode(void *pvParameters)
                   f_score,
                   r_length);
 
-    // 出力
+    // モニター出力
     sprintf(main_s, "idx=[%d]", begin_index);
     Serial.println(main_s);
+    sprintf(main_s, "e_sp: %3.2f\n", e_score);
+    Serial.println(main_s);
+    sprintf(main_s, "f_sp: %3.2f\n", f_score);
+    Serial.println(main_s);
+
     HandleOutput(e_score, f_score, e_threshold, f_threshold);
   }
 };

@@ -7,8 +7,8 @@ extern int process_count;
 extern bool SignalProcess(
     int r_extensor_data[],
     int r_flexor_data[],
-    float e_score,
-    float f_score,
+    float &e_score,
+    float &f_score,
     const int r_length);
 
 extern void ArrangeArray(
@@ -32,5 +32,21 @@ extern void Normalization(
     float b_extensor_data[],
     float b_flexor_data[],
     const int r_length);
+
+extern float Max(
+    float data[],
+    int length);
+
+extern float Min(
+    float data[],
+    int length);
+
+extern int Max(
+    int data[],
+    int length);
+
+extern int Min(
+    int data[],
+    int length);
 
 #endif // SIGNAL_PROCESSOR_H_

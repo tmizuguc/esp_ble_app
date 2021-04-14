@@ -13,12 +13,8 @@ float *b_flexor_data = NULL;
 float *m_extensor_data = NULL;
 float *m_flexor_data = NULL;
 
-const float extensor_ave = 1437;
+const float extensor_ave = 1293;
 const float flexor_ave = 1293;
-const float extensor_max = 1;
-const float flexor_max = 49;
-const float extensor_min = 0;
-const float flexor_min = 17;
 
 CMyFilter filter;
 
@@ -32,8 +28,8 @@ float notch_bw = 1.0f;
 
 bool SignalProcess(int ar_extensor_data[],
                    int ar_flexor_data[],
-                   float e_score,
-                   float f_score,
+                   float &e_score,
+                   float &f_score,
                    const int r_length)
 {
     // 1.正規化+ABS
@@ -58,11 +54,11 @@ bool SignalProcess(int ar_extensor_data[],
     vPortFree(b_extensor_data);
     vPortFree(b_flexor_data);
 
-    // モニター出力
-    unsigned long currentMillis = xTaskGetTickCount();
-    sprintf(sp_s, "time: %lu\n", currentMillis);
-    sprintf(sp_s, "e_sp: %3.2f\n", b_extensor_data[-1]);
-    sprintf(sp_s, "f_sp: %3.2f\n", b_flexor_data[-1]);
+    // 結果
+    e_score = Max(m_extensor_data, r_length);
+    f_score = Max(m_flexor_data, r_length);
+    vPortFree(m_extensor_data);
+    vPortFree(m_flexor_data);
 
     return true;
 }
@@ -174,11 +170,65 @@ void RollingAverage(
             break;
         }
     }
+}
 
-    // フィルタ後の正規化（max,minは学習によって決定）
-    for (int i = 0; i < r_length; i++)
+// Max, Min取得（別ファイルにしたい）
+float Max(
+    float data[],
+    int length)
+{
+    float cur_max = -99999;
+    for (int i = 0; i < length; i++)
     {
-        m_extensor_data[i] = (m_extensor_data[i] - extensor_min) / (extensor_max - extensor_min);
-        m_flexor_data[i] = (m_flexor_data[i] - flexor_min) / (flexor_max - flexor_min);
+        if (cur_max < data[i])
+        {
+            cur_max = data[i];
+        }
     }
+    return cur_max;
+}
+
+float Min(
+    float data[],
+    int length)
+{
+    float cur_min = 99999;
+    for (int i = 0; i < length; i++)
+    {
+        if (cur_min > data[i])
+        {
+            cur_min = data[i];
+        }
+    }
+    return cur_min;
+}
+
+int Max(
+    int data[],
+    int length)
+{
+    int cur_max = -99999;
+    for (int i = 0; i < length; i++)
+    {
+        if (cur_max < data[i])
+        {
+            cur_max = data[i];
+        }
+    }
+    return cur_max;
+}
+
+int Min(
+    int data[],
+    int length)
+{
+    int cur_min = 99999;
+    for (int i = 0; i < length; i++)
+    {
+        if (cur_min > data[i])
+        {
+            cur_min = data[i];
+        }
+    }
+    return cur_min;
 }
