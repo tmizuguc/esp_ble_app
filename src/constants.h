@@ -12,4 +12,9 @@ const int r_length = kTargetHz * kNeedsTimeSec; // 入力配列の長さ
 // フィルタ
 constexpr int kWindowWidth = kTargetHz;
 
+// 機械学習モデルを使用するかどうか
+// True: 機械学習モデルを使用した判定を行う
+// False: 閾値を使用した判定を行う
+const boolean UseML = false;
+
 #endif // CONSTANTS_H_

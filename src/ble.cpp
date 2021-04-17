@@ -14,13 +14,13 @@ extern bool oldDeviceConnected = false;
 
 // See the following for generating UUIDs:
 // https://www.uuidgenerator.net/
-#define SERVICE_UUID "63b803e2-9201-47ee-968b-1405602a1b8e"
-#define CHARACTERISTIC_UUID "46bfca8b-b8d8-40b1-87e7-c22116324c01"
+#define SERVICE_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+#define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
 
-#define MD1_OUT1 32 //GPIO #32
-#define MD1_OUT2 33 //GPIO #33
-#define MD2_OUT1 25 //GPIO #25
-#define MD2_OUT2 26 //GPIO #26
+#define MD1_IN1 32 //GPIO #32
+#define MD1_IN2 33 //GPIO #33
+#define MD2_IN1 25 //GPIO #25
+#define MD2_IN2 26 //GPIO #26
 
 char buf[100];
 
@@ -51,49 +51,61 @@ private:
 
             Serial.println("**********");
 
-            if (value == "State: 0")
+            if (value == "buttonIndex1: 0")
             {
-                sprintf(buf, "GPIO[%d,%d] out1 = 0, out2 = 0;", MD1_OUT1, MD1_OUT2);
+                sprintf(buf, "GPIO[%d,%d] out1 = 0, out2 = 0;", MD1_IN1, MD1_IN2);
                 Serial.println(buf);
-                sprintf(buf, "P %3.2f: G %3.2f", 0.0, 0.0);
-                Serial.println(buf);
-                digitalWrite(MD1_OUT1, LOW);
-                digitalWrite(MD1_OUT2, LOW);
-                digitalWrite(MD2_OUT1, LOW);
-                digitalWrite(MD2_OUT2, LOW);
+                digitalWrite(MD1_IN1, LOW);
+                digitalWrite(MD1_IN2, LOW);
             }
-            else if (value == "State: 1")
+            else if (value == "buttonIndex1: 1")
             {
-                sprintf(buf, "GPIO[%d,%d] out1 = 1, out2 = 0;", MD1_OUT1, MD1_OUT2);
+                sprintf(buf, "GPIO[%d,%d] out1 = 1, out2 = 0;", MD1_IN1, MD1_IN2);
                 Serial.println(buf);
-                sprintf(buf, "P %3.2f: G %3.2f", 0.0, 1.0);
-                Serial.println(buf);
-                digitalWrite(MD1_OUT1, HIGH);
-                digitalWrite(MD1_OUT2, LOW);
-                digitalWrite(MD2_OUT1, HIGH);
-                digitalWrite(MD2_OUT2, LOW);
+                digitalWrite(MD1_IN1, HIGH);
+                digitalWrite(MD1_IN2, LOW);
             }
-            else if (value == "State: 2")
+            else if (value == "buttonIndex1: 2")
             {
-                sprintf(buf, "GPIO[%d,%d] out1 = 0, out2 = 1;", MD1_OUT1, MD1_OUT2);
+                sprintf(buf, "GPIO[%d,%d] out1 = 0, out2 = 1;", MD1_IN1, MD1_IN2);
                 Serial.println(buf);
-                sprintf(buf, "P %3.2f: G %3.2f", 1.0, 0.0);
-                Serial.println(buf);
-                digitalWrite(MD1_OUT1, LOW);
-                digitalWrite(MD1_OUT2, HIGH);
-                digitalWrite(MD2_OUT1, LOW);
-                digitalWrite(MD2_OUT2, HIGH);
+                digitalWrite(MD1_IN1, LOW);
+                digitalWrite(MD1_IN2, HIGH);
             }
-            else if (value == "State: 3")
+            else if (value == "buttonIndex1: 3")
             {
-                sprintf(buf, "GPIO[%d,%d] out1 = 1, out2 = 1;", MD1_OUT1, MD1_OUT2);
+                sprintf(buf, "GPIO[%d,%d] out1 = 1, out2 = 1;", MD1_IN1, MD1_IN2);
                 Serial.println(buf);
-                sprintf(buf, "P %3.2f: G %3.2f", 1.0, 1.0);
+                digitalWrite(MD1_IN1, HIGH);
+                digitalWrite(MD1_IN2, HIGH);
+            }
+            else if (value == "buttonIndex2: 0")
+            {
+                sprintf(buf, "GPIO[%d,%d] out1 = 0, out2 = 0;", MD2_IN1, MD2_IN2);
                 Serial.println(buf);
-                digitalWrite(MD1_OUT1, HIGH);
-                digitalWrite(MD1_OUT2, HIGH);
-                digitalWrite(MD2_OUT1, HIGH);
-                digitalWrite(MD2_OUT2, HIGH);
+                digitalWrite(MD2_IN1, LOW);
+                digitalWrite(MD2_IN2, LOW);
+            }
+            else if (value == "buttonIndex2: 1")
+            {
+                sprintf(buf, "GPIO[%d,%d] out1 = 1, out2 = 0;", MD2_IN1, MD2_IN2);
+                Serial.println(buf);
+                digitalWrite(MD2_IN1, HIGH);
+                digitalWrite(MD2_IN2, LOW);
+            }
+            else if (value == "buttonIndex2: 2")
+            {
+                sprintf(buf, "GPIO[%d,%d] out1 = 0, out2 = 1;", MD2_IN1, MD2_IN2);
+                Serial.println(buf);
+                digitalWrite(MD2_IN1, LOW);
+                digitalWrite(MD2_IN2, HIGH);
+            }
+            else if (value == "buttonIndex2: 3")
+            {
+                sprintf(buf, "GPIO[%d,%d] out1 = 1, out2 = 1;", MD2_IN1, MD2_IN2);
+                Serial.println(buf);
+                digitalWrite(MD2_IN1, HIGH);
+                digitalWrite(MD2_IN2, HIGH);
             }
             else
             {
@@ -109,10 +121,10 @@ private:
 void SetUpBLE()
 {
     // Setup Pins
-    pinMode(MD1_OUT1, OUTPUT);
-    pinMode(MD1_OUT2, OUTPUT);
-    pinMode(MD2_OUT1, OUTPUT);
-    pinMode(MD2_OUT2, OUTPUT);
+    pinMode(MD1_IN1, OUTPUT);
+    pinMode(MD1_IN2, OUTPUT);
+    pinMode(MD2_IN1, OUTPUT);
+    pinMode(MD2_IN2, OUTPUT);
 
     // Create the BLE Device
     BLEDevice::init("ESP32 GET NOTI FROM DEVICE");

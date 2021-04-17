@@ -1,0 +1,18 @@
+{
+    "ml" : {
+    },
+    "monitor" : {
+        "do_task": {
+            "pre_task_repeat_num" : 1,
+            "task_repeat_num" : 3,
+            "post_task_repeat_num": 1,
+            "rock_keep_time": 3,
+            "paper_keep_time": 3,
+            "rest_keep_time": 3
+        },
+        "view_monitor": {
+            "raw_data_view_yaxis_max": 4096,
+            "raw_data_view_yaxis_min": 0
+        }
+    }
+}

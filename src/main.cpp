@@ -7,6 +7,14 @@
 #include "signal_processor.h"
 #include "output_handler.h"
 
+#include "BluetoothSerial.h"
+
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#endif
+
+BluetoothSerial SerialBT;
+
 TaskHandle_t TaskIO;
 TaskHandle_t TaskMain;
 
@@ -18,8 +26,8 @@ long last_sample_micros = 0;
 long last_process_micros = 0;
 
 // 判定に使用する閾値
-int e_threshold = 99999;
-int f_threshold = 99999;
+float e_threshold = 0.7;
+float f_threshold = 0.7;
 
 int begin_index = 0;
 // 筋電センサーからの入力（1000Hz）
@@ -29,8 +37,8 @@ int r_flexor_data[r_length] = {0};
 int ar_extensor_data[r_length] = {0};
 int ar_flexor_data[r_length] = {0};
 // 信号処理後の値
-float e_score = 0;
-float f_score = 0;
+volatile float e_score = 0;
+volatile float f_score = 0;
 
 // 初期化関数
 void InitData()
@@ -57,11 +65,6 @@ void TaskIOcode(void *pvParameters)
     // https://github.com/espressif/arduino-esp32/issues/3001
     // https://lang-ship.com/blog/work/esp32-freertos-l03-multitask/#toc12
     vTaskDelay(1);
-
-    if (deviceConnected)
-    {
-      continue;
-    }
 
     // 整列処理
     if (xSemaphoreTake(xMutex, (portTickType)100) == pdTRUE)
@@ -101,9 +104,41 @@ void TaskMaincode(void *pvParameters)
     // https://lang-ship.com/blog/work/esp32-freertos-l03-multitask/#toc12
     vTaskDelay(1);
 
-    if (deviceConnected)
+    // Bluetooth
+    // if (Serial.available())
+    // {
+    //   SerialBT.write(Serial.read());
+    // }
+    if (SerialBT.available())
     {
-      continue;
+      String receiveData = SerialBT.readStringUntil(';');
+      String type = getValue(receiveData, ':', 0);
+      if (type == "E")
+      {
+        Serial.println("ExtensorThreshold is Changed");
+        String value = getValue(receiveData, ':', 1);
+        if (UseML)
+        {
+          e_threshold = 400 * value.toFloat();
+        }
+        else
+        {
+          e_threshold = value.toFloat();
+        }
+      }
+      if (type == "F")
+      {
+        Serial.println("FlexorThreshold is Changed");
+        String value = getValue(receiveData, ':', 1);
+        if (UseML)
+        {
+          f_threshold = 200 * value.toFloat();
+        }
+        else
+        {
+          f_threshold = value.toFloat();
+        }
+      }
     }
 
     if (xSemaphoreTake(xMutex, (portTickType)100) == pdTRUE)
@@ -144,7 +179,8 @@ void setup()
   delay(3000);
   Serial.begin(115200);
 
-  SetUpBLE();
+  SerialBT.begin("ESP32_CLASSIC_BT");
+  Serial.println("The device started, now you can pair it with bluetooth!");
 
   xMutex = xSemaphoreCreateMutex();
   xTaskCreatePinnedToCore(TaskIOcode, "TaskIO", 4096, NULL, 2, &TaskIO, 0); //Task1実行

@@ -1,5 +1,9 @@
 .pio
-.vscode/.browse.c_cpp.db*
-.vscode/c_cpp_properties.json
-.vscode/launch.json
-.vscode/ipch
+.vscode
+.venv
+monitor/file/label/*.txt
+monitor/file/monitor/*.txt
+monitor/.*
+ml/.*
+*/*.ipynb
+*.ipynb
