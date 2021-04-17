@@ -7,8 +7,8 @@ extern int process_count;
 extern bool SignalProcess(
     int r_extensor_data[],
     int r_flexor_data[],
-    volatile float &e_score,
-    volatile float &f_score,
+    volatile float &extensor_score,
+    volatile float &flexor_score,
     const int r_length);
 
 extern void ArrangeArray(

@@ -6,6 +6,8 @@
 #include "input_handler.h"
 #include "signal_processor.h"
 #include "output_handler.h"
+#include "motion.h"
+#include "predictor.h"
 
 #include "BluetoothSerial.h"
 
@@ -26,8 +28,8 @@ long last_sample_micros = 0;
 long last_process_micros = 0;
 
 // 判定に使用する閾値
-float e_threshold = 0.7;
-float f_threshold = 0.7;
+float extensor_threshold = 0.7;
+float flexor_threshold = 0.7;
 
 int begin_index = 0;
 // 筋電センサーからの入力（1000Hz）
@@ -37,8 +39,8 @@ int r_flexor_data[r_length] = {0};
 int ar_extensor_data[r_length] = {0};
 int ar_flexor_data[r_length] = {0};
 // 信号処理後の値
-volatile float e_score = 0;
-volatile float f_score = 0;
+volatile float extensor_score = 0;
+volatile float flexor_score = 0;
 
 // 初期化関数
 void InitData()
@@ -119,11 +121,11 @@ void TaskMaincode(void *pvParameters)
         String value = getValue(receiveData, ':', 1);
         if (UseML)
         {
-          e_threshold = 400 * value.toFloat();
+          extensor_threshold = 400 * value.toFloat();
         }
         else
         {
-          e_threshold = value.toFloat();
+          extensor_threshold = value.toFloat();
         }
       }
       if (type == "F")
@@ -132,11 +134,11 @@ void TaskMaincode(void *pvParameters)
         String value = getValue(receiveData, ':', 1);
         if (UseML)
         {
-          f_threshold = 200 * value.toFloat();
+          flexor_threshold = 200 * value.toFloat();
         }
         else
         {
-          f_threshold = value.toFloat();
+          flexor_threshold = value.toFloat();
         }
       }
     }
@@ -158,19 +160,21 @@ void TaskMaincode(void *pvParameters)
     // 信号処理
     SignalProcess(ar_extensor_data,
                   ar_flexor_data,
-                  e_score,
-                  f_score,
+                  extensor_score,
+                  flexor_score,
                   r_length);
 
     // モニター出力
     sprintf(main_s, "idx=[%d]", begin_index);
     Serial.println(main_s);
-    sprintf(main_s, "e_sp: %3.2f\n", e_score);
+    sprintf(main_s, "e_sp: %3.2f\n", extensor_score);
     Serial.println(main_s);
-    sprintf(main_s, "f_sp: %3.2f\n", f_score);
+    sprintf(main_s, "f_sp: %3.2f\n", flexor_score);
     Serial.println(main_s);
 
-    HandleOutput(e_score, f_score, e_threshold, f_threshold);
+    motion motion = Predict(extensor_score, flexor_score, extensor_threshold, flexor_threshold);
+
+    HandleOutput(motion);
   }
 };
 

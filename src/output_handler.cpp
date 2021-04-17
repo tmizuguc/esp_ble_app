@@ -19,21 +19,13 @@ void OutputSetup()
     pinMode(MD2_OUT2, OUTPUT);
 }
 
-void HandleOutput(
-    float paper_score,
-    float rock_score,
-    float paper_threshold,
-    float rock_threshold)
+void HandleOutput(motion predict_motion)
 {
-    if ((rock_score >= rock_threshold) & (paper_score >= paper_threshold))
-    {
-        OutputType00();
-    }
-    else if (paper_score >= paper_threshold)
+    if (predict_motion == PAPER)
     {
         OutputType01();
     }
-    else if (rock_score >= rock_threshold)
+    else if (predict_motion == ROCK)
     {
         OutputType10();
     }

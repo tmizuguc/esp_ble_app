@@ -1,12 +1,10 @@
 #ifndef OUTPUT_HANDLER_H_
 #define OUTPUT_HANDLER_H_
 
+#include "motion.h"
+
 extern void OutputSetup();
-extern void HandleOutput(
-    float paper_score,
-    float rock_score,
-    float paper_threshold,
-    float rock_threshold);
+extern void HandleOutput(motion motion);
 void OutputType00();
 void OutputType10();
 void OutputType01();

@@ -28,8 +28,8 @@ float notch_bw = 1.0f;
 
 bool SignalProcess(int ar_extensor_data[],
                    int ar_flexor_data[],
-                   volatile float &e_score,
-                   volatile float &f_score,
+                   volatile float &extensor_score,
+                   volatile float &flexor_score,
                    const int r_length)
 {
     // 1.正規化+ABS
@@ -55,8 +55,8 @@ bool SignalProcess(int ar_extensor_data[],
     vPortFree(b_flexor_data);
 
     // 結果
-    e_score = Max(m_extensor_data, r_length);
-    f_score = Max(m_flexor_data, r_length);
+    extensor_score = Max(m_extensor_data, r_length);
+    flexor_score = Max(m_flexor_data, r_length);
     vPortFree(m_extensor_data);
     vPortFree(m_flexor_data);
 
