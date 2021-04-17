@@ -12,4 +12,7 @@ void OutputType10();
 void OutputType01();
 void OutputType11();
 
+extern float Categorize(
+    float value);
+
 #endif // OUTPUT_HANDLER_H_

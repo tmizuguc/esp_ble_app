@@ -7,8 +7,8 @@ extern int process_count;
 extern bool SignalProcess(
     int r_extensor_data[],
     int r_flexor_data[],
-    float &e_score,
-    float &f_score,
+    volatile float &e_score,
+    volatile float &f_score,
     const int r_length);
 
 extern void ArrangeArray(
@@ -48,5 +48,10 @@ extern int Max(
 extern int Min(
     int data[],
     int length);
+
+extern String getValue(
+    String data,
+    char separator,
+    int index);
 
 #endif // SIGNAL_PROCESSOR_H_
