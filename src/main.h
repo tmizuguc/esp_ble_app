@@ -2,5 +2,6 @@
 #define MAIN_H_
 
 void InitData();
+void bleCallback();
 
 #endif

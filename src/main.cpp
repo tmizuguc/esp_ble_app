@@ -31,6 +31,11 @@ long last_process_micros = 0;
 float extensor_threshold = 0.7;
 float flexor_threshold = 0.7;
 
+// 機械学習モデルを使用するかどうか
+// True: 機械学習モデルを使用した判定を行う
+// False: 閾値を使用した判定を行う
+boolean UseML = false;
+
 int begin_index = 0;
 // 筋電センサーからの入力（1000Hz）
 int r_extensor_data[r_length] = {0};
@@ -113,34 +118,7 @@ void TaskMaincode(void *pvParameters)
     // }
     if (SerialBT.available())
     {
-      String receiveData = SerialBT.readStringUntil(';');
-      String type = getValue(receiveData, ':', 0);
-      if (type == "E")
-      {
-        Serial.println("ExtensorThreshold is Changed");
-        String value = getValue(receiveData, ':', 1);
-        if (UseML)
-        {
-          extensor_threshold = 400 * value.toFloat();
-        }
-        else
-        {
-          extensor_threshold = value.toFloat();
-        }
-      }
-      if (type == "F")
-      {
-        Serial.println("FlexorThreshold is Changed");
-        String value = getValue(receiveData, ':', 1);
-        if (UseML)
-        {
-          flexor_threshold = 200 * value.toFloat();
-        }
-        else
-        {
-          flexor_threshold = value.toFloat();
-        }
-      }
+      bleCallback();
     }
 
     if (xSemaphoreTake(xMutex, (portTickType)100) == pdTRUE)
@@ -199,4 +177,47 @@ void loop()
 {
   // loop(デフォルトでCPU1)は使用しないので、削除する
   vTaskDelete(NULL);
+}
+
+// Bluetoothからデータ送信された際に呼び出される関数
+void bleCallback()
+{
+  String receiveData = SerialBT.readStringUntil(';');
+  String type = getValue(receiveData, ':', 0);
+  if (type == "useML")
+  {
+    Serial.println("UseML is True");
+    UseML = true;
+  }
+  if (type == "useManual")
+  {
+    Serial.println("UseML is False");
+    UseML = false;
+  }
+  if (type == "E")
+  {
+    Serial.println("ExtensorThreshold is Changed");
+    String value = getValue(receiveData, ':', 1);
+    if (UseML)
+    {
+      extensor_threshold = 400 * value.toFloat();
+    }
+    else
+    {
+      extensor_threshold = value.toFloat();
+    }
+  }
+  if (type == "F")
+  {
+    Serial.println("FlexorThreshold is Changed");
+    String value = getValue(receiveData, ':', 1);
+    if (UseML)
+    {
+      flexor_threshold = 200 * value.toFloat();
+    }
+    else
+    {
+      flexor_threshold = value.toFloat();
+    }
+  }
 }
