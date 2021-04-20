@@ -27,14 +27,19 @@ char main_s[64];
 long last_sample_micros = 0;
 long last_process_micros = 0;
 
-// 判定に使用する閾値
-float extensor_threshold = 0.7;
-float flexor_threshold = 0.7;
-
 // 機械学習モデルを使用するかどうか
 // True: 機械学習モデルを使用した判定を行う
 // False: 閾値を使用した判定を行う
 boolean UseML = false;
+
+// ML: 判定に使用する閾値
+float extensor_threshold = 0.7;
+float flexor_threshold = 0.7;
+// Manual: 判定に使用する閾値
+float rock_flexor_lower_limit = 0.0;
+float rock_extensor_upper_limit = 0.0;
+float paper_extensor_lower_limit = 0.0;
+float paper_flexor_upper_limit = 0.0;
 
 int begin_index = 0;
 // 筋電センサーからの入力（1000Hz）
@@ -118,6 +123,7 @@ void TaskMaincode(void *pvParameters)
     // }
     if (SerialBT.available())
     {
+      // Bluetoothから受け取ったメッセージの処理
       bleCallback();
     }
 
@@ -150,7 +156,25 @@ void TaskMaincode(void *pvParameters)
     sprintf(main_s, "f_sp: %3.2f\n", flexor_score);
     Serial.println(main_s);
 
-    motion motion = Predict(extensor_score, flexor_score, extensor_threshold, flexor_threshold);
+    motion motion = NONE;
+    if (UseML)
+    {
+      motion = Predict(
+          extensor_score,
+          flexor_score,
+          extensor_threshold,
+          flexor_threshold);
+    }
+    else
+    {
+      motion = PredictManual(
+          extensor_score,
+          flexor_score,
+          rock_flexor_lower_limit,
+          rock_extensor_upper_limit,
+          paper_extensor_lower_limit,
+          paper_flexor_upper_limit);
+    }
 
     HandleOutput(motion);
   }
@@ -194,30 +218,36 @@ void bleCallback()
     Serial.println("UseML is False");
     UseML = false;
   }
-  if (type == "E")
+  if (type == "Rock")
   {
     Serial.println("ExtensorThreshold is Changed");
-    String value = getValue(receiveData, ':', 1);
     if (UseML)
     {
-      extensor_threshold = 400 * value.toFloat();
+      String value = getValue(receiveData, ':', 1);
+      flexor_threshold = 400 * value.toFloat();
     }
     else
     {
-      extensor_threshold = value.toFloat();
+      String ll_value = getValue(receiveData, ':', 1);
+      String ul_value = getValue(receiveData, ':', 2);
+      rock_flexor_lower_limit = ll_value.toFloat();
+      rock_extensor_upper_limit = ul_value.toFloat();
     }
   }
-  if (type == "F")
+  if (type == "Paper")
   {
     Serial.println("FlexorThreshold is Changed");
-    String value = getValue(receiveData, ':', 1);
     if (UseML)
     {
-      flexor_threshold = 200 * value.toFloat();
+      String value = getValue(receiveData, ':', 1);
+      extensor_threshold = 200 * value.toFloat();
     }
     else
     {
-      flexor_threshold = value.toFloat();
+      String ll_value = getValue(receiveData, ':', 1);
+      String ul_value = getValue(receiveData, ':', 2);
+      paper_extensor_lower_limit = ll_value.toFloat();
+      paper_flexor_upper_limit = ul_value.toFloat();
     }
   }
 }
