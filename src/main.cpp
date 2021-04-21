@@ -225,6 +225,9 @@ void bleCallback()
     {
       String value = getValue(receiveData, ':', 1);
       flexor_threshold = 400 * value.toFloat();
+
+      sprintf(main_s, "FlexorThreshold: %3.2f\n", value.toFloat());
+      Serial.println(main_s);
     }
     else
     {
@@ -232,6 +235,11 @@ void bleCallback()
       String ul_value = getValue(receiveData, ':', 2);
       rock_flexor_lower_limit = ll_value.toFloat();
       rock_extensor_upper_limit = ul_value.toFloat();
+
+      sprintf(main_s, "RockFlexorLowerLimit: %3.2f\n", rock_flexor_lower_limit);
+      Serial.println(main_s);
+      sprintf(main_s, "RockExtensorUpperLimit: %3.2f\n", rock_extensor_upper_limit);
+      Serial.println(main_s);
     }
   }
   if (type == "Paper")
@@ -241,6 +249,9 @@ void bleCallback()
     {
       String value = getValue(receiveData, ':', 1);
       extensor_threshold = 200 * value.toFloat();
+
+      sprintf(main_s, "ExtensorThreshold: %3.2f\n", value.toFloat());
+      Serial.println(main_s);
     }
     else
     {
@@ -248,6 +259,11 @@ void bleCallback()
       String ul_value = getValue(receiveData, ':', 2);
       paper_extensor_lower_limit = ll_value.toFloat();
       paper_flexor_upper_limit = ul_value.toFloat();
+
+      sprintf(main_s, "PaperExtensorLowerLimit: %3.2f\n", paper_extensor_lower_limit);
+      Serial.println(main_s);
+      sprintf(main_s, "PaperFlexorUpperLimit: %3.2f\n", paper_flexor_upper_limit);
+      Serial.println(main_s);
     }
   }
 }
