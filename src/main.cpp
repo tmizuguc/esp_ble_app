@@ -8,6 +8,7 @@
 #include "output_handler.h"
 #include "motion.h"
 #include "predictor.h"
+#include "constants_param.h"
 
 #include "BluetoothSerial.h"
 
@@ -149,6 +150,9 @@ void TaskMaincode(void *pvParameters)
                   r_length);
 
     // モニター出力
+    unsigned long currentMillis = xTaskGetTickCount();
+    sprintf(main_s, "time: %lu\n", currentMillis);
+    Serial.println(main_s);
     sprintf(main_s, "idx=[%d]", begin_index);
     Serial.println(main_s);
     sprintf(main_s, "e_sp: %3.2f\n", extensor_score);
@@ -224,7 +228,7 @@ void bleCallback()
     if (UseML)
     {
       String value = getValue(receiveData, ':', 1);
-      flexor_threshold = 400 * value.toFloat();
+      flexor_threshold = flexor_max * value.toFloat();
 
       sprintf(main_s, "FlexorThreshold: %3.2f\n", value.toFloat());
       Serial.println(main_s);
@@ -248,7 +252,7 @@ void bleCallback()
     if (UseML)
     {
       String value = getValue(receiveData, ':', 1);
-      extensor_threshold = 200 * value.toFloat();
+      extensor_threshold = extensor_max * value.toFloat();
 
       sprintf(main_s, "ExtensorThreshold: %3.2f\n", value.toFloat());
       Serial.println(main_s);

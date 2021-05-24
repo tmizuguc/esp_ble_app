@@ -20,5 +20,12 @@ bool HandleInput(volatile int r_extensor_data[],
     r_extensor_data[begin_index] = a;
     r_flexor_data[begin_index] = b;
 
+    //TODO: UseML=TrueでONにする
+    if (begin_index % 10 == 0)
+    {
+        sprintf(handle_input_s, "index: %d\ne: %d\nf: %d\n", begin_index, r_extensor_data[begin_index], r_flexor_data[begin_index]);
+        Serial.println(handle_input_s);
+    }
+
     return true;
 }

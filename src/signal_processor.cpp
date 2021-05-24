@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "signal_processor.h"
+#include "constants_param.h"
 #include "constants.h"
 #include "filter.cpp"
 
@@ -12,9 +13,6 @@ float *b_flexor_data = NULL;
 
 float *m_extensor_data = NULL;
 float *m_flexor_data = NULL;
-
-const float extensor_ave = 1293;
-const float flexor_ave = 1293;
 
 CMyFilter filter;
 

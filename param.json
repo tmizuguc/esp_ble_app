@@ -4,7 +4,7 @@
     "monitor" : {
         "do_task": {
             "pre_task_repeat_num" : 1,
-            "task_repeat_num" : 3,
+            "task_repeat_num" : 2,
             "post_task_repeat_num": 1,
             "rock_keep_time": 3,
             "paper_keep_time": 3,

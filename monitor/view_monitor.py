@@ -200,7 +200,7 @@ def animate(i):
 
         useML_text = "ML: True\n" if useML else "ML: False\n"
         if useML:
-            threshold_text = f"Paper: {extensor_threshold}\n Rock: {flexor_threshold}"
+            threshold_text = f"Rock: {flexor_threshold}\nPaper: {extensor_threshold}"
         else:
             threshold_text1 = f"Rock :  Flexor  > {rock_flexor_lower_limit}, Extensor < {rock_extensor_upper_limit}\n"
             threshold_text2 = f"Paper: Extensor > {paper_extensor_lower_limit},  Flexor  < {paper_flexor_upper_limit}"

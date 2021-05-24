@@ -31,15 +31,15 @@ def instruct(instruction, keep_time):
     # monitor読み込み
     # 10ms以下で完了できる
 
-    # with open(monitor_file, "r") as f:
-    #     for line in f.readlines()[::-1]:
-    #         if "time: " in line:
-    #             t = int(re.sub("[^0-9]", "", line))
-    #             break
+    with open(monitor_file, "r") as f:
+        for line in f.readlines()[::-1]:
+            if "time: " in line:
+                t = int(re.sub("[^0-9]", "", line))
+                break
 
     # 教師として書き込み
     with open(label_file, "a") as f:
-        f.write(f"0: {instruction}\n")
+        f.write(f"{t}: {instruction}\n")
 
     # コマンドラインへ表示
     print(f"指示-> {instruction}をしてください。\n")
