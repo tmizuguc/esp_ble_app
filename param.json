@@ -3,12 +3,46 @@
     },
     "monitor" : {
         "do_task": {
-            "pre_task_repeat_num" : 1,
-            "task_repeat_num" : 2,
-            "post_task_repeat_num": 1,
-            "rock_keep_time": 3,
-            "paper_keep_time": 3,
-            "rest_keep_time": 3
+            "pre_task": {
+                "rest_keep_time": 3,
+                "repeat_num":1
+            },
+            "tuning": {
+                "paper_keep_time": 3,
+                "rock_keep_time": 3,
+                "repeat_num":1
+            },
+            "fing_stretch": {
+                "paper_keep_time": 1,
+                "rest_keep_time": 1,
+                "repeat_num":5
+            },
+            "fing_flexion": {
+                "rock_keep_time": 1,
+                "rest_keep_time": 1,
+                "repeat_num":5
+            },
+            "grip_stretch": {
+                "paper_keep_time": 3,
+                "rest_keep_time": 3,
+                "repeat_num":1
+            },
+            "grip_flexion": {
+                "rock_keep_time": 3,
+                "rest_keep_time": 3,
+                "repeat_num":1
+            },
+            "grip_release": {
+                "paper_keep_time": 3,
+                "rest_keep_time": 3,
+                "repeat_num":1
+            },
+            "elbow": {
+                "paper_keep_time": 1,
+                "rock_keep_time": 1,
+                "rest_keep_time": 1,
+                "repeat_num":5
+            }
         },
         "view_monitor": {
             "raw_data_view_yaxis_max": 4096,

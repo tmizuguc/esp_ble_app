@@ -7,11 +7,12 @@ from matplotlib.animation import FuncAnimation
 # 設定値
 parser = argparse.ArgumentParser()
 parser.add_argument('--taskNumber', type=int, default=0)
+parser.add_argument('--taskType', type=str)
 parser.add_argument('--flipImage', action='store_true')
 args = parser.parse_args()
 
-monitor_file = f"monitor/file/monitor/monitor_{args.taskNumber}.txt"
-label_file = f"monitor/file/label/label_{args.taskNumber}.txt"
+monitor_file = f"monitor/file/monitor/monitor_{args.taskType}_{args.taskNumber}.txt"
+label_file = f"monitor/file/label/label_{args.taskType}_{args.taskNumber}.txt"
 # ここまで
 
 fig = plt.figure(figsize=(5, 5))

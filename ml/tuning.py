@@ -5,8 +5,8 @@ import re
 import os
 
 # チューニング用のmonitorとlabelは0番目固定
-monitor_file = f"monitor/file/monitor/monitor_0.txt"
-label_file = f"monitor/file/label/label_0.txt"
+monitor_file = f"monitor/file/monitor/monitor_tuning_0.txt"
+label_file = f"monitor/file/label/label_tuning_0.txt"
 param_file = "./src/constants_param.h"
 
 # =============================
