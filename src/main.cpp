@@ -150,9 +150,6 @@ void TaskMaincode(void *pvParameters)
                   r_length);
 
     // モニター出力
-    unsigned long currentMillis = xTaskGetTickCount();
-    sprintf(main_s, "time: %lu\n", currentMillis);
-    Serial.println(main_s);
     sprintf(main_s, "idx=[%d]", begin_index);
     Serial.println(main_s);
     sprintf(main_s, "e_sp: %3.2f\n", extensor_score);

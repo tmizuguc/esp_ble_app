@@ -33,11 +33,16 @@ bool SignalProcess(int ar_extensor_data[],
     // 1.正規化+ABS
     b_extensor_data = (float *)pvPortMalloc(sizeof(float) * r_length);
     b_flexor_data = (float *)pvPortMalloc(sizeof(float) * r_length);
+
+    float extensor_mean = Mean(ar_extensor_data, r_length);
+    float flexor_mean = Mean(ar_flexor_data, r_length);
     Normalization(
         ar_extensor_data,
         ar_flexor_data,
         b_extensor_data,
         b_flexor_data,
+        extensor_mean,
+        flexor_mean,
         r_length);
 
     // 2.移動平均
@@ -92,6 +97,8 @@ void Normalization(
     int ar_flexor_data[],
     float b_extensor_data[],
     float b_flexor_data[],
+    float extensor_mean,
+    float flexor_mean,
     const int r_length)
 {
     for (int i = 0; i < r_length; ++i)
@@ -113,8 +120,8 @@ void Normalization(
         // 正規化（aveは学習によって決定）
         b_extensor_data[i] = f_extensor;
         b_flexor_data[i] = f_flexor;
-        // b_extensor_data[i] = abs(f_extensor - extensor_ave);
-        // b_flexor_data[i] = abs(f_flexor - flexor_ave);
+        b_extensor_data[i] = abs(f_extensor - extensor_mean);
+        b_flexor_data[i] = abs(f_flexor - flexor_mean);
     }
 }
 
@@ -231,6 +238,19 @@ int Min(
         }
     }
     return cur_min;
+}
+
+int Mean(
+    int data[],
+    int length)
+{
+    int total = 0;
+    for (int i = 0; i < length; i++)
+    {
+        total += data[i];
+    }
+    float mean_value = (float)total / (float)length;
+    return mean_value;
 }
 
 // 文字列分割

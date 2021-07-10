@@ -31,6 +31,8 @@ extern void Normalization(
     int ar_flexor_data[],
     float b_extensor_data[],
     float b_flexor_data[],
+    float extensor_mean,
+    float flexor_mean,
     const int r_length);
 
 extern float Max(
@@ -46,6 +48,10 @@ extern int Max(
     int length);
 
 extern int Min(
+    int data[],
+    int length);
+
+extern int Mean(
     int data[],
     int length);
 

@@ -5,5 +5,6 @@ monitor/file/label/*.txt
 monitor/file/monitor/*.txt
 monitor/.*
 ml/.*
+ml/dataset/*.json
 */*.ipynb
 *.ipynb
