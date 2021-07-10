@@ -65,7 +65,7 @@ def main():
     if args.onlyMonitor:
         task_number = args.taskNumber
         loop.run_until_complete(asyncio.gather(
-            *[view_monitor(999), do_monitor(999)]))
+            *[view_monitor(999, "only_monitor"), do_monitor(999, "only_monitor")]))
     else:
 
         task_type = args.taskType
