@@ -4,20 +4,17 @@ import argparse
 import time
 import pygame.mixer
 import json
+from define_task import define_task
 
 # do_monitor, do_task, view_monitor, view_stateで共通
 parser = argparse.ArgumentParser()
 parser.add_argument('--taskNumber', type=int, default=0)
+parser.add_argument('--taskType', type=str)
 args = parser.parse_args()
 
-monitor_file = f"monitor/file/monitor/monitor_{args.taskNumber}.txt"
-label_file = f"monitor/file/label/label_{args.taskNumber}.txt"
+monitor_file = f"monitor/file/monitor/monitor_{args.taskType}_{args.taskNumber}.txt"
+label_file = f"monitor/file/label/label_{args.taskType}_{args.taskNumber}.txt"
 # ここまで
-
-# パラメータ
-with open("param.json") as f:
-    param = json.load(f)
-
 
 def sound(source):
     '''音を鳴らす'''
@@ -63,25 +60,9 @@ def instruct(instruction, keep_time):
 # タスク
 # チューニング用の場合はpost_taskとpre_taskを使用しない
 # =======
-paper_keep_time = param["monitor"]["do_task"]["paper_keep_time"]
-rock_keep_time = param["monitor"]["do_task"]["rock_keep_time"]
-rest_keep_time = param["monitor"]["do_task"]["rest_keep_time"]
 
-pre_task = [
-    ["rest", rest_keep_time]
-]*param["monitor"]["do_task"]["pre_task_repeat_num"]
-
-task = [
-    ["paper", paper_keep_time],
-    ["rest", rest_keep_time],
-    ["rock", rock_keep_time],
-    ["rest", rest_keep_time],
-]*param["monitor"]["do_task"]["task_repeat_num"]
-
-post_task = [
-    ["rest", rest_keep_time]
-]*param["monitor"]["do_task"]["post_task_repeat_num"]
-
+# タスク取得
+pre_task, task = define_task(args.taskType)
 
 pygame.mixer.init()
 
@@ -109,19 +90,15 @@ while True:
 with open(label_file, "w") as f:
     f.write("\n")
 
-# 10秒待機
-waiting_time_seconds = 10
+# 5秒待機
+waiting_time_seconds = 5
 print(f"### {waiting_time_seconds}秒後に開始します ###")
 for i in range(waiting_time_seconds, 0, -1):
     time.sleep(1)
 
-# チューニング用 -> taskのみ
-# タスク用 -> pre-task + task + post-task
+# タスク用： pre-task + task
 time.sleep(3)
-if int(args.taskNumber) == 0:
-    all_task = pre_task + task
-else:
-    all_task = pre_task + task + post_task
+all_task = pre_task + task
 
 for task_ in all_task:
 

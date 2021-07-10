@@ -8,6 +8,7 @@ import numpy as np
 import re
 import pandas as pd
 import os
+import glob
 
 import tensorflow as tf
 tf.random.set_seed(1)
@@ -50,10 +51,10 @@ def fix_times(times):
     return fixed_times
 
 
-def load_data(use_task):
+def load_data(task_name, task_num):
     # input
     try:
-        with open(label_file_path + f"label_{use_task}.txt", "r") as f:
+        with open(label_file_path + f"label_{task_name}_{task_num}.txt", "r") as f:
             times = []
             labels = []
 
@@ -74,7 +75,7 @@ def load_data(use_task):
     # 信号処理後の筋電
     # TODO: tuning.pyと同時に行えるように修正
     try:
-        with open(monitor_file_path + f"monitor_{use_task}.txt", "r") as f:
+        with open(monitor_file_path + f"monitor_{task_name}_{task_num}.txt", "r") as f:
             lines = f.readlines()
     except:
         raise FileNotFoundError
@@ -155,6 +156,37 @@ def load_data(use_task):
 
     return X_data, y_data
 
+
+def get_task_num(task_name):
+    # 使用可能なtask_num一覧を取得する
+    label_files = glob.glob(label_file_path + f"/*{task_name}*")
+    label_num = [int(re.match(
+        f".+label_{task_name}_(.+).txt", label_file)[1]) for label_file in label_files]
+
+    monitor_files = glob.glob(monitor_file_path + f"/*{task_name}*")
+    monitor_num = [int(re.match(
+        f".+monitor_{task_name}_(.+).txt", monitor_file)[1]) for monitor_file in monitor_files]
+
+    return list(set(label_num) & set(monitor_num))
+
+
+# ========================
+# 筋電データとラベルの読み込み
+# ========================
+X_data_list = []
+y_data_list = []
+for task_name in useTask:
+    # print(f"task: {task_name}")
+    task_num_list = get_task_num(task_name)
+    for task_num in task_num_list:
+        try:
+            # X_data, y_data = load_data(task_name=task_name, task_num=task_num)
+            # X_data_list.append(X_data)
+            # y_data_list.append(y_data)
+            print(f"use: {task_name} {task_num}")
+        except (FileNotFoundError, AttributeError) as e:
+            # print(f"cannot use task {task_name} {task_num}")
+            print("Reason -> FileNotFoundError, AttributeError")
 
 print("■■ TEST RESULTS ■■")
 print(f"OK!!")

@@ -111,8 +111,10 @@ void Normalization(
         // f_flexor = (short)filter.Process(f_flexor);
 
         // 正規化（aveは学習によって決定）
-        b_extensor_data[i] = abs(f_extensor - extensor_ave);
-        b_flexor_data[i] = abs(f_flexor - flexor_ave);
+        b_extensor_data[i] = f_extensor;
+        b_flexor_data[i] = f_flexor;
+        // b_extensor_data[i] = abs(f_extensor - extensor_ave);
+        // b_flexor_data[i] = abs(f_flexor - flexor_ave);
     }
 }
 
