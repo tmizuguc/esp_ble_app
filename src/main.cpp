@@ -9,6 +9,7 @@
 #include "motion.h"
 #include "predictor.h"
 #include "constants_param.h"
+#include "constants_param_ml.h"
 
 #include "BluetoothSerial.h"
 
@@ -160,11 +161,18 @@ void TaskMaincode(void *pvParameters)
     motion motion = NONE;
     if (UseML)
     {
-      motion = Predict(
+      motion = PredictManual(
           extensor_score,
           flexor_score,
-          extensor_threshold,
-          flexor_threshold);
+          ml_rock_flexor_lower_limit,
+          ml_rock_extensor_upper_limit,
+          ml_paper_extensor_lower_limit,
+          ml_paper_flexor_upper_limit);
+      // motion = Predict(
+      //     extensor_score,
+      //     flexor_score,
+      //     extensor_threshold,
+      //     flexor_threshold);
     }
     else
     {
