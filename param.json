@@ -15,12 +15,12 @@
             "fing_stretch": {
                 "paper_keep_time": 1,
                 "rest_keep_time": 1,
-                "repeat_num":30
+                "repeat_num":5
             },
             "fing_flexion": {
                 "rock_keep_time": 1,
                 "rest_keep_time": 1,
-                "repeat_num":30
+                "repeat_num":5
             },
             "grip_stretch": {
                 "paper_keep_time": 3,

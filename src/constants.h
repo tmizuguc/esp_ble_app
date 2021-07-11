@@ -6,8 +6,8 @@ constexpr int kTargetHz = 1000;
 constexpr int kPredictHz = 10;
 
 // 配列長
-const int kNeedsTimeSec = 1;                    // 入力配列の時間
-const int r_length = kTargetHz * kNeedsTimeSec; // 入力配列の長さ
+const float kNeedsTimeSec = 0.25;                      // 入力配列の時間
+const int r_length = (int)(kTargetHz * kNeedsTimeSec); // 入力配列の長さ
 
 // フィルタ
 constexpr int kWindowWidth = kTargetHz;

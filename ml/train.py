@@ -7,26 +7,14 @@ param_file = "./src/constants_param_ml.h"
 df_raw = pd.read_json("./ml/dataset/raw.json")
 df_sp = pd.read_json("./ml/dataset/sp.json")
 
-extensor_raw = df_raw["extensor_raw"].to_list()
-flexor_raw = df_raw["flexor_raw"].to_list()
-
-extensor_mean = np.mean(extensor_raw)
-flexor_mean = np.mean(flexor_raw)
-
-#最も簡単な方法
-df_raw["extensor_sp"] = df_raw["extensor_raw"].apply(lambda x: abs(x - extensor_mean))
-df_raw["flexor_sp"] = df_raw["flexor_raw"].apply(lambda x: abs(x - flexor_mean))
-
-df_raw["extensor_sp"] = df_raw["extensor_sp"].apply(int)
-df_raw["flexor_sp"] = df_raw["flexor_sp"].apply(int)
-
-count_idx_list = df_raw.count_idx.unique()
+# sp版
+count_idx_list = df_sp.count_idx.unique()
 
 X = []
 y = []
 for count_idx in count_idx_list:
-    _df = df_raw[df_raw["count_idx"] == count_idx]
-    _df = _df[-70:-40] # 使用するデータ（idxは結構テキトウ）
+    _df = df_sp[df_sp["count_idx"] == count_idx]
+    _df = _df[-3:-1] # 使用するデータ（idxは結構テキトウ）
     _x = _df[["extensor_sp", "flexor_sp"]].to_numpy()
     _y = _df["label"].to_numpy()[0]
     X.append(_x)
@@ -56,6 +44,8 @@ def calc_score_threshold(rock_f_lower_threshold, rock_e_upper_threshold, paper_e
     for _x, _y in zip(X_max, y):
         e = _x[0]
         f = _x[1]
+        if (f > rock_f_lower_threshold) & (e < rock_e_upper_threshold) & (e > paper_e_lower_threshold) & (f < paper_f_upper_threshold):
+            continue
         if (f > rock_f_lower_threshold) & (e < rock_e_upper_threshold):
             t_rock.append(_y)
         if (e > paper_e_lower_threshold) & (f < paper_f_upper_threshold):
@@ -85,7 +75,10 @@ d = [calc_score_threshold(rock_f_lower_threshold, rock_e_upper_threshold, 0, 0)
 
 df = pd.DataFrame(d)
 
-row = df.sort_values("f_rock").tail(1)
+df = df[df["f_rock"] >= df["f_rock"].max()]
+df = df[df["rock_e_upper_threshold"] == df["rock_e_upper_threshold"].min()]
+df = df[df["rock_f_lower_threshold"] == df["rock_f_lower_threshold"].max()]
+row = df.head(1)
 rock_f_lower_threshold = row["rock_f_lower_threshold"].tolist()[0]
 rock_e_upper_threshold = row["rock_e_upper_threshold"].tolist()[0]
 
@@ -96,7 +89,10 @@ d = [calc_score_threshold(rock_f_lower_threshold, rock_e_upper_threshold, paper_
 
 df = pd.DataFrame(d)
 
-row = df.sort_values("f_paper").tail(1)
+df = df[df["f_paper"] >= df["f_paper"].max()]
+df = df[df["paper_f_upper_threshold"] == df["paper_f_upper_threshold"].min()]
+df = df[df["paper_e_lower_threshold"] == df["paper_e_lower_threshold"].max()]
+row = df.head(1)
 paper_e_lower_threshold = row["paper_e_lower_threshold"].tolist()[0]
 paper_f_upper_threshold = row["paper_f_upper_threshold"].tolist()[0]
 
@@ -112,6 +108,6 @@ print(f"paper: recall={recall_paper}, precision={precision_paper}")
 # 更新
 with open(param_file, "w") as f:
     f.write(f"const float ml_rock_flexor_lower_limit = {rock_f_lower_threshold};\n")
-    f.write(f"const float ml_rock_extensor_upper_limit = {rock_e_upper_threshold};\n")
-    f.write(f"const float ml_paper_extensor_lower_limit = {paper_e_lower_threshold};\n")
-    f.write(f"const float ml_paper_flexor_upper_limit = {paper_f_upper_threshold};\n")
+    f.write(f"const float ml_rock_extensor_upper_limit = {int(rock_e_upper_threshold*1.2)};\n")
+    f.write(f"const float ml_paper_extensor_lower_limit = {int(paper_e_lower_threshold*1.1)};\n")
+    f.write(f"const float ml_paper_flexor_upper_limit = {int(paper_f_upper_threshold*1.2)};\n")
