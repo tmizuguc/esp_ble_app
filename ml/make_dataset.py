@@ -131,7 +131,7 @@ def load_emg_sp_data(task_name, task_num):
             _extensor_sp = False
             _flexor_sp = False
 
-    df_emg_sp = pd.DataFrame({"time": times, "extensor_raw": extensor_sps, "flexor_raw": flexor_sps})
+    df_emg_sp = pd.DataFrame({"time": times, "extensor_sp": extensor_sps, "flexor_sp": flexor_sps})
         
     return df_emg_sp
 
@@ -160,7 +160,7 @@ def load_sp_dataset(task_name, task_num):
     _df["task_num"] = task_num
     
     # 整理
-    _df = _df[["task_name", "task_num", "label", "extensor_raw", "flexor_raw", "time"]]
+    _df = _df[["task_name", "task_num", "label", "extensor_sp", "flexor_sp", "time"]]
     return _df
 
 
@@ -176,6 +176,26 @@ def get_task_num(task_name):
 
     return list(set(label_num) & set(monitor_num))
 
+# 教示番号（count_idx）をつける
+def add_count_idx(df):
+    df = df.reset_index(drop=True)
+
+    last_label = None
+    count_idx = -1
+    count_idx_list = []
+    for i in df.index:
+        row = df.iloc[i]
+        label = row["label"]
+        if label == last_label:
+            count_idx_list.append(count_idx)
+            pass
+        else:
+            last_label = label
+            count_idx += 1
+            count_idx_list.append(count_idx)
+
+    df["count_idx"] = count_idx_list
+    return df
 
 _df_raw_list = []
 _df_sp_list = []
@@ -191,6 +211,9 @@ for task_name in useTask:
         
 df_raw = pd.concat(_df_raw_list)
 df_sp = pd.concat(_df_sp_list)
+
+df_raw = add_count_idx(df_raw)
+df_sp = add_count_idx(df_sp)
 
 # 保存
 df_raw.to_json(dataset_file_path + "raw.json", orient='records')

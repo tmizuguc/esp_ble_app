@@ -17,8 +17,8 @@ float *m_flexor_data = NULL;
 CMyFilter filter;
 
 // ノッチフィルタのパラメータ
-float notch_freq = 50.0f;
-float notch_bw = 1.0f;
+// float notch_freq = 50.0f;
+// float notch_bw = 1.0f;
 
 // バンドパスフィルタのパラメータ
 // float bandpass_freq = 100.0f;
@@ -108,16 +108,16 @@ void Normalization(
         float f_flexor = (float)ar_flexor_data[i];
 
         // ノッチフィルタ
-        filter.Notch(notch_freq, notch_bw, kTargetHz);
-        f_extensor = (short)filter.Process(f_extensor);
-        f_flexor = (short)filter.Process(f_flexor);
+        // filter.Notch(notch_freq, notch_bw, kTargetHz);
+        // f_extensor = (short)filter.Process(f_extensor);
+        // f_flexor = (short)filter.Process(f_flexor);
 
         // バンドパスフィルタ
         // filter.BandPass(bandpass_freq, bandpass_bw, kTargetHz);
         // f_extensor = (short)filter.Process(f_extensor);
         // f_flexor = (short)filter.Process(f_flexor);
 
-        // 正規化（aveは学習によって決定）
+        // 正規化
         b_extensor_data[i] = f_extensor;
         b_flexor_data[i] = f_flexor;
         b_extensor_data[i] = abs(f_extensor - extensor_mean);
@@ -139,8 +139,8 @@ void RollingAverage(
     float flexor_sum = 0;
     int m_i = 0;
 
-    // 100msのフィルタ
-    int filterWidth = kWindowWidth / 10;
+    // 幅100(=1ms*100=100ms)のフィルタ
+    int filterWidth = kWindowWidth / 100;
 
     for (int i = 0; i < filterWidth; i++)
     {
