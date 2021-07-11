@@ -159,31 +159,31 @@ void TaskMaincode(void *pvParameters)
     Serial.println(main_s);
 
     motion motion = NONE;
-    if (UseML)
-    {
-      motion = PredictManual(
-          extensor_score,
-          flexor_score,
-          ml_rock_flexor_lower_limit,
-          ml_rock_extensor_upper_limit,
-          ml_paper_extensor_lower_limit,
-          ml_paper_flexor_upper_limit);
-      // motion = Predict(
-      //     extensor_score,
-      //     flexor_score,
-      //     extensor_threshold,
-      //     flexor_threshold);
-    }
-    else
-    {
-      motion = PredictManual(
-          extensor_score,
-          flexor_score,
-          rock_flexor_lower_limit,
-          rock_extensor_upper_limit,
-          paper_extensor_lower_limit,
-          paper_flexor_upper_limit);
-    }
+    motion = PredictManual(
+        extensor_score,
+        flexor_score,
+        ml_rock_flexor_lower_limit,
+        ml_rock_extensor_upper_limit,
+        ml_paper_extensor_lower_limit,
+        ml_paper_flexor_upper_limit);
+    // if (UseML)
+    // {
+    //   motion = Predict(
+    //       extensor_score,
+    //       flexor_score,
+    //       extensor_threshold,
+    //       flexor_threshold);
+    // }
+    // else
+    // {
+    //   motion = PredictManual(
+    //       extensor_score,
+    //       flexor_score,
+    //       rock_flexor_lower_limit,
+    //       rock_extensor_upper_limit,
+    //       paper_extensor_lower_limit,
+    //       paper_flexor_upper_limit);
+    // }
 
     HandleOutput(motion);
   }
